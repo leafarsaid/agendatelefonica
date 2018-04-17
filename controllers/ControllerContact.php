@@ -20,8 +20,8 @@ class ControllerContact {
 	}
 	public function list($id = null){
 	}
-	public function listAll($txt = null){
-		return $this->contact->listAll($txt);
+	public function listAll($txt = null, $id = null, $idtag = null){
+		return $this->contact->listAll($txt, $id, $idtag);
 	}
 }
 ?>

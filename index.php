@@ -6,7 +6,7 @@
     <meta name="description" content="Sistema de armazenamento de contatos telefônicos">
     <meta name="author" content="Rafael Dias">
 
-    <title>Agênda telefônica</title>
+    <title>Agenda telefônica</title>
 
     <link href="libs/css/bootstrap.min.css" rel="stylesheet">
     <link href="libs/css/dashboard.css" rel="stylesheet">
@@ -17,10 +17,10 @@
       <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="./">
         Agenda <span data-feather="phone"></span> telefônica
       </a>
-      <input class="form-control form-control-dark w-100" type="text" placeholder="Pesquisar" aria-label="Pesquisar">
+      <input class="form-control form-control-dark w-100" type="text" placeholder="Pesquisar" aria-label="Pesquisar" id="pesquisar">
       <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
-          <a class="nav-link" href="" id="linkFav">
+          <a class="nav-link marcadores favoritos" style="cursor: pointer;" id="linkFav">
             <span data-feather="star"></span>
             Favoritos
           </a>
@@ -28,7 +28,7 @@
       </ul>
       <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
-          <a class="nav-link" href="" id="linkAdd">
+          <a class="nav-link add-contact" style="cursor: pointer;" id="linkAdd" data-toggle="modal" data-target="#Modal2">
             <span data-feather="plus"></span>
             Adicionar
           </a>
@@ -43,13 +43,13 @@
           <div class="sidebar-sticky">
             <ul class="nav flex-column">
               <li class="nav-item">
-                <a class="nav-link active" href="#">
+                <a class="nav-link marcadores active todos" style="cursor: pointer;">
                   <span data-feather="home"></span>
                   Todos os contatos <span class="sr-only">(current)</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link marcadores favoritos" style="cursor: pointer;">
                   <span data-feather="star"></span>
                   Favoritos
                 </a>
@@ -61,14 +61,16 @@
             </h6>
             <ul class="nav flex-column mb-0" id="taglist">
             </ul>
+            <form id="addTag">
             <div class="input-group mb-3">
-              <input type="text" class="form-control" placeholder="Criar marcador" aria-label="Criar marcador" aria-describedby="basic-addon2">
+              <input type="text" class="form-control" placeholder="Criar marcador" aria-label="Criar marcador" aria-describedby="basic-addon2" id="addTagText" required>
               <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button">
+                <button class="btn btn-outline-secondary" type="submit">
                   <span data-feather="plus"></span>
                 </button>
               </div>
             </div>
+            </form>
           </div>
         </nav>
         <!-- navegação lateral -->
@@ -79,8 +81,6 @@
             <div class="btn-toolbar mb-2 mb-md-0">
               <div class="form-group">
                 <select class="form-control" id="combotags">
-                
-                <option>Favoritos</option>
                 </select>
               </div>
             </div>
@@ -88,6 +88,93 @@
           <div class="table-responsive" id="maincontent">
           </div>
         </main>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="ModalLabel"></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            ...
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary modal-ok">Ok</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal2 -->
+    <div class="modal fade" id="Modal2" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="ModalLabel"></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form id="formAdd">
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="firstname">Nome</label>
+              <input type="text" class="form-control" id="firstname" placeholder="Nome do contato" required>
+            </div>
+            <div class="form-group">
+              <label for="lastname">Sobrenome</label>
+              <input type="text" class="form-control" id="lastname" placeholder="Sobrenome do contato" required>
+            </div>
+            <div class="form-group">
+              <label for="nickname">Apelido</label>
+              <input type="text" class="form-control" id="nickname" placeholder="Apelido do contato" required>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-3">
+                <label for="title">Título</label>
+                <input type="text" class="form-control" id="title" placeholder="Ex.: Sr.">
+              </div>
+              <div class="form-group col-md-3">
+                <label for="countrycode">Cód. País</label>
+                <input type="text" class="form-control" id="countrycode" placeholder="Ex.: 55">
+              </div>
+              <div class="form-group col-md-6">
+                <label for="phonenumber">Telefone</label>
+                <input type="text" class="form-control" id="phonenumber" placeholder="Telefone com DDD">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="chk0" value="0">
+                <label class="form-check-label" for="chk0">Favorito</label>
+              </div>  
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="chk1" value="1">
+                <label class="form-check-label" for="chk1">Família</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="chk19" value="19">
+                <label class="form-check-label" for="chk19">Trabalho</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="chk26" value="26">
+                <label class="form-check-label" for="chk26">Amigos</label>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary modal-ok">Ok</button>
+          </div>
+          </form>
+        </div>
       </div>
     </div>
 

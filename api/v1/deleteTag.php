@@ -7,7 +7,7 @@ $obj =  json_decode($data);
 $id = $obj->id;
 if(!empty($data)){	
     $ControllerTag = new ControllerTag();
-    $ControllerTag->delete($id);
-    header('Location:listTag.php');
+    $return = $ControllerTag->delete($id);
+    exit($return);
 }
 ?>
