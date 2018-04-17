@@ -18,8 +18,6 @@ class ControllerContact {
 	public function delete($id){
 		return $this->contact->delete($id);
 	}
-	public function list($id = null){
-	}
 	public function listAll($txt = null, $id = null, $idtag = null){
 		return $this->contact->listAll($txt, $id, $idtag);
 	}
