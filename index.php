@@ -126,24 +126,24 @@
           <div class="modal-body">
             <div class="form-group">
               <label for="firstname">Nome</label>
-              <input type="text" class="form-control" id="firstname" placeholder="Nome do contato" required>
+              <input type="text" class="form-control" id="firstname" placeholder="Nome do contato" maxlength="100" required>
             </div>
             <div class="form-group">
               <label for="lastname">Sobrenome</label>
-              <input type="text" class="form-control" id="lastname" placeholder="Sobrenome do contato" required>
+              <input type="text" class="form-control" id="lastname" placeholder="Sobrenome do contato" maxlength="100" required>
             </div>
             <div class="form-group">
               <label for="nickname">Apelido</label>
-              <input type="text" class="form-control" id="nickname" placeholder="Apelido do contato" required>
+              <input type="text" class="form-control" id="nickname" placeholder="Apelido do contato" maxlength="100" required>
             </div>
             <div class="form-row">
               <div class="form-group col-md-3">
                 <label for="title">Título</label>
-                <input type="text" class="form-control" id="title" placeholder="Ex.: Sr.">
+                <input type="text" class="form-control" id="title" placeholder="Ex.: Sr." maxlength="10">
               </div>
               <div class="form-group col-md-3">
                 <label for="countrycode">Cód. País</label>
-                <input type="text" class="form-control" id="countrycode" placeholder="Ex.: 55">
+                <input type="text" class="form-control" id="countrycode" placeholder="Ex.: 55" data-mask="000">
               </div>
               <div class="form-group col-md-6">
                 <label for="phonenumber">Telefone</label>
@@ -170,6 +170,7 @@
             </div>
           </div>
           <div class="modal-footer">
+            <input type="hidden" id="id-contact-modal">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
             <button type="submit" class="btn btn-primary modal-ok">Ok</button>
           </div>
@@ -183,6 +184,7 @@
     <script src="libs/js/bootstrap.min.js"></script>
     <script src="libs/js/agendatelefonica.js"></script>
     <script src="libs/js/feather.min.js"></script>
+    <script src="libs/jquery/plugins/jquery.mask.js"></script>
 
   </body>
 </html>

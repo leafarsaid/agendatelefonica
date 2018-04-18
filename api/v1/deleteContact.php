@@ -7,7 +7,7 @@ $obj =  json_decode($data);
 $id = $obj->id;
 if(!empty($data)){	
     $ControllerContact = new ControllerContact();
-    $ControllerContact->delete($id);
-    header('Location:listContact.php');
+    $return = $ControllerContact->delete($id);
+    exit($return);
 }
 ?>

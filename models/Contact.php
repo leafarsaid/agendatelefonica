@@ -9,7 +9,7 @@ class Contact {
         $this->conn = new Connection;
     }
     public function insert($obj){
-    	$sql = "INSERT INTO contact(title,firstname,lastname,nickname,countrycode,phonenumber,favorite) VALUES (:title,:firstname,:lastname,:nickname,:countrycode,:phonenumber,:favorite)";
+    	$sql = "INSERT INTO contact(title,firstname,lastname,nickname,countrycode,phonenumber) VALUES (:title,:firstname,:lastname,:nickname,:countrycode,:phonenumber)";
     	$query = $this->conn->prepare($sql);
         $query->bindValue('title',  $obj->title);
         $query->bindValue('firstname', $obj->firstname);
@@ -17,11 +17,15 @@ class Contact {
         $query->bindValue('nickname' , $obj->nickname);
         $query->bindValue('countrycode' , $obj->countrycode);
         $query->bindValue('phonenumber' , $obj->phonenumber);
-        $query->bindValue('favorite' , $obj->favorite);
-    	return $query->execute();
+		$return = $query->execute();
+		if($return) {
+			return '1';
+		} else{
+			return '0';
+		}
 	}
 	public function update($obj,$id = null){
-		$sql = "UPDATE contact SET title = :title, firstname = :firstname,lastname = :lastname, nickname = :nickname,countrycode =:countrycode, phonenumber = :phonenumber, favorite = :favorite WHERE id = :id ";
+		$sql = "UPDATE contact SET title = :title, firstname = :firstname,lastname = :lastname, nickname = :nickname,countrycode =:countrycode, phonenumber = :phonenumber WHERE id = :id ";
 		$query = $this->conn->prepare($sql);
 		$query->bindValue('title', $obj->title);
 		$query->bindValue('firstname', $obj->firstname);
@@ -29,15 +33,24 @@ class Contact {
 		$query->bindValue('nickname', $obj->nickname);
 		$query->bindValue('countrycode' , $obj->countrycode);
 		$query->bindValue('phonenumber' , $obj->phonenumber);
-		$query->bindValue('favorite' , $obj->favorite);
 		$query->bindValue('id', $id);
-		return $query->execute();
+		$return = $query->execute();
+		if($return) {
+			return '1';
+		} else{
+			return '0';
+		}
 	}
 	public function delete($id = null){
 		$sql =  "DELETE FROM contact WHERE id = :id";
 		$query = $this->conn->prepare($sql);
 		$query->bindValue('id',$id);
-		$query->execute();
+		$return = $query->execute();
+		if($return) {
+			return '1';
+		} else{
+			return '0';
+		}
 	}
 	public function listAll($txt = null, $id = null, $idtag = null){
 		if ($idtag === '-1'){

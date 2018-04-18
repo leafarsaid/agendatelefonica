@@ -6,11 +6,13 @@ $(document).ready(function() {
     $(document.body).on( "click", ".marcadores", function() {
         selectTag($(this));
     });
-
+    
+    //
     $('#combotags').on( "change", function() {
         selectTag($(this), true);
     });
 
+    //
     $('#pesquisar').bind("enterKey",function(e){
         listContact($(this).val());
      });
@@ -21,10 +23,11 @@ $(document).ready(function() {
          }
      });
 
-     $('#linkAdd').on( "click", function() {
+    //$('#linkAdd').on( "click", function() {
         //selectTag($(this), true);
-    });
+    //});
 
+    //
     $(document.body).on( "submit", "#addTag", function(event) {
         event.preventDefault();
         deActiveAll();
@@ -33,6 +36,18 @@ $(document).ready(function() {
         listTag();
     });
 
+    //
+    $("#formAdd").submit(function(event) {
+        event.preventDefault();
+        var modal = $("#Modal2");
+        if (parseInt(modal.find('#id-contact-modal').val()) > 0){
+            updContact(modal);
+        } else{
+            addContact(modal);
+        }
+    });
+
+    //
     $('#Modal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var id = button.data('id');
@@ -47,51 +62,59 @@ $(document).ready(function() {
                 modal.modal('hide');
             });
         }
+        if (button.hasClass('del-contact')){
+            modal.find('.modal-title').text('Exclusão');
+            modal.find('.modal-body').text('Você deseja realmente excluir o contato?');
+            $(document.body).on( "click", ".modal-ok", function() {
+                delContact(id);
+                listContact();
+                modal.modal('hide');
+            });
+        }
     });
 
+    //
     $('#Modal2').on('show.bs.modal', function (event) {
         $("form input:checkbox").prop('checked', false);
         var button = $(event.relatedTarget);
         var id = button.data('id');
         var modal = $(this);
         if (button.hasClass('add-contact')){
-            modal.find('.modal-title').text('Novo contato');
-            modal.find('#firstname').val('');
-            modal.find('#lastname').val('');
-            modal.find('#nickname').val('');
-            modal.find('#title').val('');
-            modal.find('#countrycode').val('');
-            modal.find('#phonenumber').val('');
-            $(document.body).on( "submit", "#formAdd", function() {
-                modal.modal('hide');
-            });
+            resetContact(modal);
         }
         if (button.hasClass('upd-contact')){
             modal.find('.modal-title').text('Atualizar contato');
-            var data = { id: id };
-            $.ajax({
-                method: "GET",
-                url: "api/v1/listContact.php",
-                data: data,
-                success : function( msg ) {
-                    $.each(msg, function(i, item) {
-                        modal.find('#firstname').val(item.firstname);
-                        modal.find('#lastname').val(item.lastname);
-                        modal.find('#nickname').val(item.nickname);
-                        modal.find('#title').val(item.title);
-                        modal.find('#countrycode').val(item.countrycode);
-                        modal.find('#phonenumber').val(item.phonenumber);
-                        $.each(item.tags.split(","), function(j, tag) {
-                            modal.find("#chk"+tag).prop('checked', true);
-                        });
-                    });
-                }
-            });
-            $(document.body).on( "submit", "#formAdd", function() {
-                modal.modal('hide');
-            });
+            loadContact(id, modal);
         }
     });
+    
+    /*$("#phonenumber").mask("(99) 9999?9-9999");
+
+    $("#phonenumber").on("blur", function() {
+        var last = $(this).val().substr( $(this).val().indexOf("-") + 1 );
+
+        if( last.length == 3 ) {
+            var move = $(this).val().substr( $(this).val().indexOf("-") - 1, 1 );
+            var lastfour = move + last;
+            var first = $(this).val().substr( 0, 9 );
+
+            $(this).val( first + '-' + lastfour );
+        }
+    });*/
+    $("#phonenumber")
+        .mask("(99)99999-99999")
+        .focusout(function (event) {  
+            var target, phone, element;  
+            target = (event.currentTarget) ? event.currentTarget : event.srcElement;  
+            phone = target.value.replace(/\D/g, '');
+            element = $(target);  
+            element.unmask();  
+            if(phone.length > 10) {  
+                element.mask("(99)99999-99999");  
+            } else {  
+                element.mask("(99)9999-99999");  
+            }  
+        });
     //Fim da região de definições de comportamento
 });
 
@@ -210,11 +233,137 @@ function listTag(){
     });
 }
 
-function addContact(){}
+/**
+ * Limpa o formulário de cadastro de contatos
+ * @param {*} modal 
+ */
+function resetContact(modal){
+    modal.find('.modal-title').text('Novo contato');
+    modal.find('#id-contact-modal').val('');
+    modal.find('#firstname').val('');
+    modal.find('#lastname').val('');
+    modal.find('#nickname').val('');
+    modal.find('#title').val('');
+    modal.find('#countrycode').val('');
+    modal.find('#phonenumber').val('');
+}
 
-function delContact(){}
+/**
+ * Carrega com informações o formulário de cadastro de contatos
+ * @param {*} id 
+ * @param {*} modal 
+ */
+function loadContact(id, modal){
+    var data = { id: id };
+    $.ajax({
+        method: "GET",
+        url: "api/v1/listContact.php",
+        data: data,
+        success : function( msg ) {
+            $.each(msg, function(i, item) {
+                modal.find('#id-contact-modal').val(id);
+                modal.find('#firstname').val(item.firstname);
+                modal.find('#lastname').val(item.lastname);
+                modal.find('#nickname').val(item.nickname);
+                modal.find('#title').val(item.title);
+                modal.find('#countrycode').val(item.countrycode);
+                modal.find('#phonenumber').val(item.phonenumber);
+                if (item.tags != null){
+                    $.each(item.tags.split(","), function(j, tag) {
+                        modal.find("#chk"+tag).prop('checked', true);
+                    });
+                }
+            });
+        }
+    });
+    $("#phonenumber").mask("(99)99999-99999");
+}
 
-function updContact(){}
+/**
+ * Adiciona um contato
+ * @param {*} modal 
+ */
+function addContact(modal){
+    var data = { 
+        firstname: modal.find('#firstname').val(),
+        lastname: modal.find('#lastname').val(),
+        nickname: modal.find('#nickname').val(),
+        title: modal.find('#title').val(),
+        countrycode: modal.find('#countrycode').val(),
+        phonenumber: modal.find('#phonenumber').val() 
+    };
+
+    data = JSON.stringify(data);
+    $.ajax({
+        method: "POST",
+        url: "api/v1/insertContact.php",
+        data: data
+    })
+    .done(function( msg ) {
+        modal.modal('hide');
+        if(msg==1){
+            listContact();
+        } else{
+            alert('Erro ao inserir');
+        }
+    });
+}
+
+/**
+ * Exclui um contato
+ * @param {*} id 
+ */
+function delContact(id){
+    var data = { 
+        id: id
+    };
+
+    data = JSON.stringify(data);
+    $.ajax({
+        method: "POST",
+        url: "api/v1/deleteContact.php",
+        data: data
+    })
+    .done(function( msg ) {
+        if(msg==1){
+            listContact();
+        } else{
+            alert('Erro ao excluir');
+        }
+    });
+}
+
+/**
+ * Atualiza um contato
+ * @param {*} modal 
+ */
+function updContact(modal){
+
+    var data = { 
+        id: modal.find('#id-contact-modal').val(),
+        firstname: modal.find('#firstname').val(),
+        lastname: modal.find('#lastname').val(),
+        nickname: modal.find('#nickname').val(),
+        title: modal.find('#title').val(),
+        countrycode: modal.find('#countrycode').val(),
+        phonenumber: modal.find('#phonenumber').val() 
+    };
+
+    data = JSON.stringify(data);
+    $.ajax({
+        method: "POST",
+        url: "api/v1/updateContact.php",
+        data: data
+    })
+    .done(function( msg ) {
+        modal.modal('hide');
+        if(msg==1){
+            listContact();
+        } else{
+            alert('Erro ao atualizar');
+        }
+    });
+}
 
 /**
  * Lista contatos
@@ -270,7 +419,7 @@ function listContact(txt=null, id=null, idtag=null){
                 contacts += '<span data-feather="edit"></span>';
                 contacts += '</a>';
                 contacts += '</td><td>';
-                contacts += '<a class="nav-link" style="cursor: pointer;">';
+                contacts += '<a class="nav-link del-contact" data-id="'+item.id+'"data-toggle="modal" data-target="#Modal" style="cursor: pointer;">';
                 contacts += '<span data-feather="trash-2"></span>';
                 contacts += '</a>';
                 contacts += '</td>';
