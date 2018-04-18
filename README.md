@@ -10,3 +10,9 @@ Copiar os arquivos para seu DocumentRoot e executar no browser.
 ## Live demo
 
 http://rafaeldias.me/agendatelefonica
+
+## TODO
+
+* Ajustes nas máscaras
+* Validação de campos no backend
+* Listar marcadores dinamicamente na modal do contato
